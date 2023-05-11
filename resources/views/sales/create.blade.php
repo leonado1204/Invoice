@@ -213,9 +213,6 @@
 					</div> -->
 
 				</div>
-				<div class="mt-3 text-right">
-					{!! Form::submit('Update', ['class' => 'btn btn-lg btn-primary', 'id' => 'nalpa']) !!}
-				</div>
 			</div>
 			<div class="col-md-5" id="vehicle_info"><br/>
 				{!! Form::label('vehicle : ', 'Vehicle Details :') !!}
@@ -225,8 +222,11 @@
 						<td>
 							<div class="row" style="padding-left: 10%;">
 								{!! Form::input('text', 'regNum', @$value, ['class' => 'form-control col-md-8', 'placeholder' => '', 'id' => 'regNum']) !!}
+								<div class="input-group-prepend">
+								<span class="btn btn-outline-primary" id="checkDataButton">Check</span>
+					</div>
+
 								&nbsp;&nbsp;&nbsp;
-								<button class="btn btn-outline-primary col-md-3">Submit</button>
 							</div>
 						</td>
 					</tr>
@@ -324,7 +324,7 @@
 		$(document).ready(function() {
 			var attach_number = 0;
 			var max_attach = 7;
-			var wrapper         = $(".attach_list");
+			var wrapper = $(".attach_list");
 
 			$(".add_attach").click(function(e){
 				e.preventDefault();
@@ -378,6 +378,46 @@
 			}
 		});
 
+		$('#checkDataButton').click(function(){
+			var regNum=$('#regNum').val();
+			$.ajax({
+				dataType:'JSON',
+				url:'https://uk1.ukvehicledata.co.uk/api/datapackage/VehicleData?v=2&api_nullitems=1&auth_apikey=90a55893-3635-4941-967e-254415d0bc78&user_tag=&key_VRM='+regNum,
+				type:'GET',
+				success:function(data){
+					if(data.Response.StatusCode=="Success"){
+						$('#make').val(data.Response.DataItems.VehicleRegistration.Make);
+						$('#model').val(data.Response.DataItems.VehicleRegistration.Model);
+						$('#colour').val(data.Response.DataItems.VehicleRegistration.Colour);
+						$('#engNum').val(data.Response.DataItems.VehicleRegistration.EngineNumber);
+						$('#weight').val(data.Response.DataItems.VehicleRegistration.GrossWeight);
+						$('#bodyStyle').val(data.Response.DataItems.SmmtDetails.BodyStyle);
+						$('#exported').val(data.Response.DataItems.VehicleRegistration.Exported);
+						$('#gearBox').val(data.Response.DataItems.VehicleRegistration.Transmission);
+						$('#modelSetupDate').val(data.Response.DataItems.SmmtDetails.VisibilityDate);
+						$('#firRegis').val(data.Response.DataItems.VehicleRegistration.DateFirstRegisteredUk);
+
+					} else if (data.Response.StatusCode=="ItemNotFound") {
+						$('#make').val("");
+						$('#model').val("");
+						$('#colour').val("");
+						$('#engNum').val("");
+						$('#weight').val("");
+						$('#bodyStyle').val("");
+						$('#exported').val("");
+						$('#gearBox').val("");
+						$('#modelSetupDate').val("");
+						$('#firRegis').val("");
+						$('#VehicleError').append('<div clss="alert alert-danger alert-dismissible fade show" style="width:90%;" role="alert>Error:<strong>Vehicle Not Found!</strong><button>');
+					}
+				},
+				error: function(){
+					console.log(data);
+				}
+
+			})
+		});
+
 		$("#custsel").change(function() {
 			const client = $('option:selected', this).attr('data-client');
 			const address = $('option:selected', this).attr('data-client_address');
@@ -405,9 +445,6 @@
 
 		})
 
-		$('#nalpa').click(function() {
-			console.log('tela');
-		})
 	});
 
 	</script>

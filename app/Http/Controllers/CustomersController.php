@@ -4,6 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Customers;
 use App\Invoice;
+use App\Sale;
+use App\Sales;
+use App\SaleDes;
+use App\SalesCustomers;
 use Illuminate\Http\Request;
 
 use App\Http\Requests\CustomersFormRequest;
@@ -23,27 +27,13 @@ class CustomersController extends Controller
 	
 	public function create(Request $request)
 	{
+        dd($request);
 		
 	}
 	
 	public function store(Request $request)
 	{
-		if($request->make == ""){
-		Customers::create([
-			'client' => $request->client,
-			'client_address' => $request->client_address,
-			'client_poskod'  => $request->client_poskod,
-			'client_telephone' => $request->client_telephone,
-			'client_email' => $request->client_email,
-			]);
-	
-		// message to confirm storing data
-		Session::flash('flash_message', 'Data successfully added!');
-	
-		// redirect back to original route
-		return redirect()->back();
-
-		}elseif($request->make != ""){
+		if($request->clientname == ""){
 		Invoice::create([
 			'ClientId' => $request->clientId,
 			'make' => $request->make,
@@ -56,10 +46,92 @@ class CustomersController extends Controller
 			'gearBox'  => $request->gearbox,
 			'ModelSetupDate' => $request->modeldate,
 			'firRegis' => $request->firregis,
+            'RegNumber' => $request->regNum,
 			]);
 	
 		// message to confirm storing data
+		Session::flash('flash_message', 'Data successfully added!');
+	
+		// redirect back to original route
 		return redirect()->back();
+
+		}elseif($request->clientname != ""){
+
+            $user = new Customers();
+
+            $user->client = $request->clientname;
+            $user->client_address = $request->clientadd;
+            $user->client_poskod = $request->clientzip;
+            $user->client_telephone = $request->clienttel;
+            $user->client_email = $request->clientemail;
+            $user->client_mobile = $request->clientmob;
+            $user->address_line2 = $request->clientaddd;
+            $user->city = $request->clientcity;
+            $user->state_province = $request->clientstate;
+            $user->country = $request->clientcountry;
+            $user->save();
+
+            $invoice = new Invoice();
+			$invoice->ClientId = $user->id;
+			$invoice->make = $request->make;
+			$invoice->model = $request->model;
+			$invoice->weight = $request->weight;
+			$invoice->engNum = $request->engNum;
+			$invoice->colour = $request->colour;
+			$invoice->bodyStyle = $request->bodyStyle;
+			$invoice->exported = $request->exported;
+			$invoice->gearBox = $request->gearBox;
+			$invoice->ModelSetupDate = $request->modelSetupDate;
+			$invoice->firRegis = $request->firRegis;
+            $invoice->RegNumber = $request->regNum;
+            $invoice->price = $request->vehicleprice;
+            $invoice->quantity = $request->quantity;
+            $invoice->warranty = $request->warranty;
+
+            $invoice->save();
+
+            $salen = new Sale();
+            $salen->id = $invoice->id;
+            $salen->invoice_num = $invoice->id;
+            $salen->user_id = auth()->user()->id;
+            $salen->customer_id = $invoice->id;
+
+            $salen->save();
+
+            $salesn = new Sales();
+            $salesn->id = $invoice->id;
+            $salesn->id_user = auth()->user()->id;
+            $salesn->date_sale = $salen->created_at;
+            $salesn->registration_num = "0";
+            $salesn->total_price = "0";
+            $salesn->warranty = "0";
+            $salesn->delivery_fee = "0";
+            $salesn->custom_field = "0";
+            $salesn->discount = "0";
+            $salesn->part_exchange = "0";
+            $salesn->deposit_paid = "0";
+            $salesn->finance_paid = "0";
+
+            $salesn->save();
+
+            $salenDes = new SaleDes();
+            $salenDes->sale_id = $invoice->id;
+            $salenDes->description = $request->make." ".$request->model;
+            $salenDes->quantity = 1;
+            $salenDes->amount = 0;
+
+            $salenDes->save();
+
+            $salenCus = new SalesCustomers();
+            $salenCus->id_sales = $salesn->id;
+            $salenCus->id_customer = $user->id;
+            $salenCus->id = $invoice->id;
+
+            $salenCus->save();
+
+
+            // message to confirm storing data
+		return redirect("/sales/index");
 		}
 	//
 	}

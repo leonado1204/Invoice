@@ -61,7 +61,7 @@ class SalesController extends Controller
 		return view('sales.read');
 }
 
-	public function create()
+	public function create(Request $request)
 	{
 		return view('sales.create');
 	}
@@ -79,9 +79,9 @@ class SalesController extends Controller
 	}
 	public function store(Request $request)
 	{
+
 		####################################################
 		// invoice part
-	
 
 		
 		$data = [
@@ -300,6 +300,7 @@ class SalesController extends Controller
 	{
 		$sale = Invoice::find($sales);
 		$sale->delete();
+
 
 		// info when update success
 		// Session::flash('flash_message', 'Data successfully deleted!');

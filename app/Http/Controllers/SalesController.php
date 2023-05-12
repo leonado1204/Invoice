@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 // load model
 use App\Sales;
 use App\Sale;
+use App\Invoice;
 use App\SaleDes;
 use App\SalesItems;
 use App\SlipPostage;
@@ -78,7 +79,6 @@ class SalesController extends Controller
 	}
 	public function store(Request $request)
 	{
-
 		####################################################
 		// invoice part
 	
@@ -296,16 +296,9 @@ class SalesController extends Controller
 		return redirect(route('sales.index'));      // redirect back to original route
 	}
 	
-	public function destroy(Sales $sales)
+	public function destroy($sales)
 	{
-		$sale = Sales::find($sales->id);
-		// Sales::destroy($sales->id);
-		$sale->slippostageimage()->delete();
-		$sale->customer()->delete();
-		$sale->invitems()->delete();
-		$sale->slipnumber()->delete();
-		$sale->salestaxes()->delete();
-		$sale->salespayment()->delete();
+		$sale = Invoice::find($sales);
 		$sale->delete();
 
 		// info when update success

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Customers;
+use App\Invoice;
 use Illuminate\Http\Request;
 
 use App\Http\Requests\CustomersFormRequest;
@@ -20,19 +21,64 @@ class CustomersController extends Controller
 		return view('customers.index');
 	}
 	
-	public function create()
+	public function create(Request $request)
 	{
 		
 	}
 	
 	public function store(Request $request)
 	{
+		if($request->make == ""){
 		Customers::create([
 			'client' => $request->client,
 			'client_address' => $request->client_address,
 			'client_poskod'  => $request->client_poskod,
 			'client_telephone' => $request->client_telephone,
 			'client_email' => $request->client_email,
+			]);
+	
+		// message to confirm storing data
+		Session::flash('flash_message', 'Data successfully added!');
+	
+		// redirect back to original route
+		return redirect()->back();
+
+		}elseif($request->make != ""){
+		Invoice::create([
+			'ClientId' => $request->clientId,
+			'make' => $request->make,
+			'model'  => $request->model,
+			'weight' => $request->weight,
+			'engNum' => $request->engnum,
+			'colour'  => $request->colour,
+			'bodyStyle' => $request->bodystyle,
+			'exported' => $request->exported,
+			'gearBox'  => $request->gearbox,
+			'ModelSetupDate' => $request->modeldate,
+			'firRegis' => $request->firregis,
+			]);
+	
+		// message to confirm storing data
+		return redirect()->back();
+		}
+	//
+	}
+
+	public function storeInvoice(Request $request)
+	{
+		Invoice::create([
+			'clientId' => $request->ClientId,
+			'RegNumber' => $request->regNum,
+			'make' => $request->make,
+			'model'  => $request->model,
+			'weight' => $request->weight,
+			'engNum' => $request->engnum,
+			'colour'  => $request->colour,
+			'bodyStyle' => $request->bodystyle,
+			'exported' => $request->exported,
+			'gearBox'  => $request->gearbox,
+			'ModelSetupDate' => $request->modeldate,
+			'firRegis' => $request->firregis,
 			]);
 	
 		// message to confirm storing data

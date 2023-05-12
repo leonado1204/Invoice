@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 
 // load model
 use App\Sales;
+use App\Invoice;
 use App\SalesItems;
 use App\SlipPostage;
 use App\Customers;

@@ -24,9 +24,9 @@ class RedirectIfThisItemIsDifferentOwner
         //     echo $value->id_user.'<br />';
         // }
 
-        if ( ! $request->user()->OwnerOfThisItem( $request->route()->sales->id_user ) ) {
-            return redirect()->back();
-        }
+        // if ( ! $request->user()->OwnerOfThisItem( $request->route()->sales->id_user ) ) {
+        //     return redirect()->back();
+        // }
         return $next($request);
     }
 }

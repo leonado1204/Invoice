@@ -16,6 +16,7 @@ use App\SalesCustomers;
 use App\Preferences;
 use App\Taxes;
 use App\Banks;
+use App\Invoice;
 
 use Crabbly\Fpdf\Fpdf as Fpdf;
 use Carbon\Carbon;
@@ -168,7 +169,8 @@ $pdf->MultiCell(0, 5, 'Current Mileage : ', 0, 'L');
 $pdf->MultiCell(0, 5, 'MOT Included : ', 0, 'L');
 $pdf->MultiCell(0, 5, 'TAX Included : ', 0, 'L');
 
-
+$vehicle = Invoice::where('ClientId', $lo2->id)->get();
+foreach($vehicle as $vehicle){
 $pdf->SetFont('Arial','B',8);
 // tracking number list
 $pdf->SetRightMargin(10);
@@ -176,17 +178,17 @@ $pdf->SetLeftMargin(160);
 $pdf->SetY(47);
 $pdf->MultiCell(0, 5, $sales->id, 0, 'L');
 $pdf->MultiCell(0, 5, $sales->date_sale, 0, 'L');
-$pdf->MultiCell(0, 5, 'KL54WKM', 0, 'L');
-$pdf->MultiCell(0, 5, 'Audi', 0, 'L');
-$pdf->MultiCell(0, 5, 'Q7 TDI Sport', 0, 'L');
-$pdf->MultiCell(0, 5, 'Blue', 0, 'L');
+$pdf->MultiCell(0, 5, $vehicle->RegNumber, 0, 'L');
+$pdf->MultiCell(0, 5, $vehicle->make, 0, 'L');
+$pdf->MultiCell(0, 5, $vehicle->model, 0, 'L');
+$pdf->MultiCell(0, 5, $vehicle->colour, 0, 'L');
 $pdf->MultiCell(0, 5, 'Wv32456Y78Y789784', 0, 'L');
-$pdf->MultiCell(0, 5, 'EN564Y88', 0, 'L');
-$pdf->MultiCell(0, 5, '01/02/2020', 0, 'L');
+$pdf->MultiCell(0, 5, $vehicle->engNum, 0, 'L');
+$pdf->MultiCell(0, 5, $vehicle->firRegis, 0, 'L');
 $pdf->MultiCell(0, 5, '102000', 0, 'L');
 $pdf->MultiCell(0, 5, '1 Month(s)', 0, 'L');
 $pdf->MultiCell(0, 5, '3 Month(s)', 0, 'L');
-
+}
 $pdf->Ln(10);
 
 
@@ -200,98 +202,98 @@ $pdf->Ln(1);
 
 
 
-// reset margin
-$pdf->SetX(10);
-$pdf->SetRightMargin(10);
-$pdf->SetLeftMargin(10);
+// // reset margin
+// $pdf->SetX(10);
+// $pdf->SetRightMargin(10);
+// $pdf->SetLeftMargin(10);
 
-// reset font
-$pdf->SetFont('Arial','B',10);
-$pdf->SetTextColor(0, 0, 0);
-$pdf->Ln(5);
+// // reset font
+// $pdf->SetFont('Arial','B',10);
+// $pdf->SetTextColor(0, 0, 0);
+// $pdf->Ln(5);
 
-$lipay = Payments::where(['id_sales' => $sales->id])->get();
-$py = 0;
+// $lipay = Payments::where(['id_sales' => $sales->id])->get();
+// $py = 0;
 
-if ($lipay->count() > 0) {
+// if ($lipay->count() > 0) {
 
-	// header
-	$pdf->SetFont('Arial', 'B', 8);
-	$pdf->Cell(130, 7, 'Description', 1, 0, 'C');
-	$pdf->Cell(30, 7, 'Quantity', 1, 0, 'C');
-	$pdf->Cell(30, 7, 'Amount', 1, 1, 'C');
+// 	// header
+// 	$pdf->SetFont('Arial', 'B', 8);
+// 	$pdf->Cell(130, 7, 'Description', 1, 0, 'C');
+// 	$pdf->Cell(30, 7, 'Quantity', 1, 0, 'C');
+// 	$pdf->Cell(30, 7, 'Amount', 1, 1, 'C');
 	
-	// list of payment
-	$pdf->SetFont('Arial','',8);
+// 	// list of payment
+// 	$pdf->SetFont('Arial','',8);
 	
-	$pdf->Cell(130, 7, 'Audi Q7 TDI Sport as Described Above', 1, 0, 'C');
-	$pdf->Cell(30, 7, '1', 1, 0, 'C');
-	$pdf->Cell(30, 7, '£'.$sales->total_price, 1, 1, 'C');
+// 	$pdf->Cell(130, 7, 'Audi Q7 TDI Sport as Described Above', 1, 0, 'C');
+// 	$pdf->Cell(30, 7, '1', 1, 0, 'C');
+// 	$pdf->Cell(30, 7, '£'.$sales->total_price, 1, 1, 'C');
 	
-	$pdf->Cell(130, 7, 'VAT Qualifying Vehicle', 1, 0, 'C');
-	$pdf->Cell(30, 7, '@20%', 1, 0, 'C');
-	$pdf->Cell(30, 7, 'Amount/1.20 = £'.$sales->total_price/1.2, 1, 1, 'C');
+// 	$pdf->Cell(130, 7, 'VAT Qualifying Vehicle', 1, 0, 'C');
+// 	$pdf->Cell(30, 7, '@20%', 1, 0, 'C');
+// 	$pdf->Cell(30, 7, 'Amount/1.20 = £'.$sales->total_price/1.2, 1, 1, 'C');
 	
-	$pdf->Cell(130, 7, 'Warranty', 1, 0, 'C');
-	$pdf->Cell(30, 7, '3 Months', 1, 0, 'C');
-	$pdf->Cell(30, 7, '£'.$sales->warranty, 1, 1, 'C');
+// 	$pdf->Cell(130, 7, 'Warranty', 1, 0, 'C');
+// 	$pdf->Cell(30, 7, '3 Months', 1, 0, 'C');
+// 	$pdf->Cell(30, 7, '£'.$sales->warranty, 1, 1, 'C');
 	
-	$pdf->Cell(130, 7, 'Delivery Fee, Delivery Address as Above', 1, 0, 'C');
-	$pdf->Cell(30, 7, '1', 1, 0, 'C');
-	$pdf->Cell(30, 7, '£'.$sales->delivery_fee, 1, 1, 'C');
+// 	$pdf->Cell(130, 7, 'Delivery Fee, Delivery Address as Above', 1, 0, 'C');
+// 	$pdf->Cell(30, 7, '1', 1, 0, 'C');
+// 	$pdf->Cell(30, 7, '£'.$sales->delivery_fee, 1, 1, 'C');
 	
-	$pdf->Cell(130, 7, 'Custom Field', 1, 0, 'C');
-	$pdf->Cell(30, 7, '1', 1, 0, 'C');
-	$pdf->Cell(30, 7, '£'.$sales->custom_field, 1, 1, 'C');
+// 	$pdf->Cell(130, 7, 'Custom Field', 1, 0, 'C');
+// 	$pdf->Cell(30, 7, '1', 1, 0, 'C');
+// 	$pdf->Cell(30, 7, '£'.$sales->custom_field, 1, 1, 'C');
 	
-	$pdf->Cell(130, 7, 'Discount', 1, 0, 'C');
-	$pdf->Cell(30, 7, '1', 1, 0, 'C');
-	if($sales->discount > 0) {
-		$pdf->Cell(30, 7, '£'.$sales->discount, 1, 1, 'C');
-	}else{
-		$pdf->Cell(30, 7, '-£'.abs($sales->discount), 1, 1, 'C');
-	}
+// 	$pdf->Cell(130, 7, 'Discount', 1, 0, 'C');
+// 	$pdf->Cell(30, 7, '1', 1, 0, 'C');
+// 	if($sales->discount > 0) {
+// 		$pdf->Cell(30, 7, '£'.$sales->discount, 1, 1, 'C');
+// 	}else{
+// 		$pdf->Cell(30, 7, '-£'.abs($sales->discount), 1, 1, 'C');
+// 	}
 	
-	$pdf->Cell(130, 7, 'Part Exchange BMW 325 SE, Reg LE12RED, Red, 312500 Miles', 1, 0, 'C');
-	$pdf->Cell(30, 7, '1', 1, 0, 'C');
-	if($sales->part_exchange > 0) {
-		$pdf->Cell(30, 7, '£'.$sales->part_exchange, 1, 1, 'C');
-	}else{
-		$pdf->Cell(30, 7, '-£'.abs($sales->part_exchange), 1, 1, 'C');
-	}
+// 	$pdf->Cell(130, 7, 'Part Exchange BMW 325 SE, Reg LE12RED, Red, 312500 Miles', 1, 0, 'C');
+// 	$pdf->Cell(30, 7, '1', 1, 0, 'C');
+// 	if($sales->part_exchange > 0) {
+// 		$pdf->Cell(30, 7, '£'.$sales->part_exchange, 1, 1, 'C');
+// 	}else{
+// 		$pdf->Cell(30, 7, '-£'.abs($sales->part_exchange), 1, 1, 'C');
+// 	}
 	
-	$pdf->Cell(130, 7, 'Deposit Paid', 1, 0, 'C');
-	$pdf->Cell(30, 7, '1', 1, 0, 'C');
-	if($sales->deposit_paid > 0) {
-		$pdf->Cell(30, 7, '£'.$sales->deposit_paid, 1, 1, 'C');
-	}else{
-		$pdf->Cell(30, 7, '-£'.abs($sales->deposit_paid), 1, 1, 'C');
-	}
+// 	$pdf->Cell(130, 7, 'Deposit Paid', 1, 0, 'C');
+// 	$pdf->Cell(30, 7, '1', 1, 0, 'C');
+// 	if($sales->deposit_paid > 0) {
+// 		$pdf->Cell(30, 7, '£'.$sales->deposit_paid, 1, 1, 'C');
+// 	}else{
+// 		$pdf->Cell(30, 7, '-£'.abs($sales->deposit_paid), 1, 1, 'C');
+// 	}
 	
-	$pdf->Cell(130, 7, 'Finance Paid', 1, 0, 'C');
-	$pdf->Cell(30, 7, '1', 1, 0, 'C');
-	if($sales->finance_paid > 0) {
-		$pdf->Cell(30, 7, '£'.$sales->finance_paid, 1, 1, 'C');
-	}else{
-		$pdf->Cell(30, 7, '-£'.abs($sales->finance_paid), 1, 1, 'C');
-	}
+// 	$pdf->Cell(130, 7, 'Finance Paid', 1, 0, 'C');
+// 	$pdf->Cell(30, 7, '1', 1, 0, 'C');
+// 	if($sales->finance_paid > 0) {
+// 		$pdf->Cell(30, 7, '£'.$sales->finance_paid, 1, 1, 'C');
+// 	}else{
+// 		$pdf->Cell(30, 7, '-£'.abs($sales->finance_paid), 1, 1, 'C');
+// 	}
 	
-	$total = $sales->total_price + 
+// 	$total = $sales->total_price + 
 
-	// footer
-	$pdf->SetFont('Arial','B',10);
-	$pdf->Cell(130, 7, '', 0, 0, 'C');
-	$pdf->Cell(30, 7, 'Total', 1, 0, 'C');
-	$pdf->Cell(30, 7, '', 1, 1, 'C');
+// 	// footer
+// 	$pdf->SetFont('Arial','B',10);
+// 	$pdf->Cell(130, 7, '', 0, 0, 'C');
+// 	$pdf->Cell(30, 7, 'Total', 1, 0, 'C');
+// 	$pdf->Cell(30, 7, '', 1, 1, 'C');
 	
-	$pdf->Cell(130, 7, '', 0, 0, 'C');
-	$pdf->Cell(30, 7, 'Paid', 1, 0, 'C');
-	$pdf->Cell(30, 7, 'Card', 1, 1, 'C');
-} else {
-	$pdf->SetFont('Arial','',8);
-	$pdf->Cell(0, 7, 'Sorry, no payment yet.', 0, 1, 'C');
-}
-$pdf->Ln(5);
+// 	$pdf->Cell(130, 7, '', 0, 0, 'C');
+// 	$pdf->Cell(30, 7, 'Paid', 1, 0, 'C');
+// 	$pdf->Cell(30, 7, 'Card', 1, 1, 'C');
+// } else {
+// 	$pdf->SetFont('Arial','',8);
+// 	$pdf->Cell(0, 7, 'Sorry, no payment yet.', 0, 1, 'C');
+// }
+// $pdf->Ln(5);
 
 
 

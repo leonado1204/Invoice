@@ -540,10 +540,3 @@ Route::post('printreport/payment', [
 //////////////////////////////////////////////
 
 Route::post('/getVehicleData', 'ApiController@getData');
-
-
-
-
-
-
-
